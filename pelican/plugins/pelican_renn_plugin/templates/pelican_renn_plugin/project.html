@@ -1,0 +1,20 @@
+<li class="projects-element">
+    <div class="projects-button" style="background: no-repeat url('{{ SITE_URL }}/{{ project_image }}'); background-size: contain;">
+        <a href="#{{ project_anchor }}"><div class="projects-button-title">{{ project_title }}</div></a>
+    </div>
+    <div class="projects-popup" id="{{ project_anchor }}">
+        <div class="projects-popup-window">
+            <a class="projects-popup-close" href="#">&times;</a>
+            <h2>{{ project_title }}</h2>
+            {{ project_content }}
+            {% if project_links %}
+                <hr/>
+                <ul class="project-links">
+                    {% for title, uri in project_links %}
+                        <li><a href="{{ uri }}">{{ title }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+</li>
