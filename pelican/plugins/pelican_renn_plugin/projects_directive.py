@@ -1,12 +1,8 @@
 import re
+import hashlib
 
-from jinja2 import PackageLoader
 from docutils import nodes
-from docutils.core import publish_parts
 from docutils.parsers.rst import Directive, directives
-
-jinja_env = None
-jinja_settings = None
 
 
 def parse_link(raw):
@@ -20,23 +16,6 @@ def parse_link(raw):
     uri = match[2]
     title = match[1] if match[1] else match[2]
     return title.strip(), uri.strip()
-
-
-def retrieve_jinja_context(generator):
-    """
-    Callable for the `generator_init` signal that retrieves the jinja environment and
-    settings from the generator.
-    """
-
-    global jinja_env
-    global jinja_settings
-    jinja_env = generator.env
-    jinja_settings = generator.settings
-
-    jinja_env.loader.loaders.append(PackageLoader(
-        "pelican_renn_plugin",
-        "templates"
-    ))
 
 
 class ProjectDirective(Directive):
@@ -57,9 +36,8 @@ class ProjectDirective(Directive):
         Create a list element for the project.
         """
 
-        template = jinja_env.get_template("pelican_renn_plugin/project.html")
-
-        if not "projects-temp-container" in self.state.parent["classes"]:
+        # Ensure we are inside a projects-modal
+        if not "projects-modal" in self.state.parent["classes"]:
             return [self.state_machine.reporter.error(
                 "Found a 'project' directive outside of 'projects'",
                 nodes.literal_block(self.block_text, self.block_text),
@@ -77,23 +55,53 @@ class ProjectDirective(Directive):
         raw_links = self.options.get("links", "")
         links = [parse_link(link.strip()) for link in
                  raw_links.split(",")] if raw_links else []
-
         anchor = f"projects-popup-{title.lower().replace(" ", "-")}"
 
-        return [nodes.raw("", template.render(
-            project_title=title,
-            project_image=image,
-            project_links=links,
-            project_anchor=anchor,
-            project_content=publish_parts(
-                source="\n".join(self.content),
-                writer_name="html",
-                settings_overrides={
-                    "initial_header_level": 3
-                }
-            )["fragment"],
-            **jinja_settings
-        ), format="html")]
+        # Overall element
+        project_node = nodes.list_item(classes=["projects-element"])
+
+        # Button tile
+        project_node += (button_node := nodes.container(classes=["projects-button"]))
+        button_node += (button_link_node := nodes.reference(refuri=f"#{anchor}"))
+        button_link_node += (button_title_node := nodes.container(
+            classes=["projects-button-title"]))
+        button_title_node += nodes.Text(title)
+
+        # Popup element
+        project_node += (popup_node := nodes.container(classes=["projects-popup"],
+                                                       ids=[anchor]))
+        popup_node += (popup_window_node := nodes.section(
+            classes=["projects-popup-window"]))
+        popup_window_node += nodes.reference(text="\xD7", refuri="#",
+                                             classes=["projects-popup-close"])
+        popup_window_node += nodes.title("", nodes.Text(title))
+        self.state.nested_parse(self.content, self.content_offset, popup_window_node,
+                                match_titles=True)
+        if links:
+            popup_window_node += nodes.transition()
+            popup_window_node += (links_node := nodes.bullet_list())
+            for link_text, link_uri in links:
+                links_node += nodes.list_item(
+                    "",
+                    nodes.reference(text=link_text, refuri=link_uri)
+                )
+
+        # Dynamic button background styling
+        class_name = f"projects-bg-{hashlib.md5(image.encode()).hexdigest()[:8]}"
+        button_node["classes"].append(class_name)
+        style_node = nodes.raw(
+            "",
+            f"""
+            <style>
+                .{class_name} {{
+                    background: center/contain no-repeat url("/{image}");
+                }}
+            </style>
+            """,
+            format="html"
+        )
+
+        return [style_node, project_node]
 
 
 class ProjectsDirective(Directive):
@@ -108,11 +116,16 @@ class ProjectsDirective(Directive):
         Create a bullet list node and populate it with the contents of the directive.
         """
 
-        template = jinja_env.get_template("pelican_renn_plugin/projects.html")
+        wrapper_node = nodes.container(classes=["float-wrapper"])
+        projects_node = nodes.bullet_list(classes=["projects-modal", "floating-block"])
+        wrapper_node += projects_node
+        self.state.nested_parse(self.content, self.content_offset, projects_node)
 
-        container = nodes.container(classes=["projects-temp-container"])
-        self.state.nested_parse(self.content, self.content_offset, container)
+        # Move non projects-element items to put them in the wrapper
+        # We iterate in reverse as to not break the iteration if a child is removed
+        for child in reversed(projects_node.children):
+            if not isinstance(child, nodes.list_item):
+                projects_node.remove(child)
+                wrapper_node += child
 
-        return [nodes.raw("", template.render(
-            projects = [c.astext() for c in container.children]
-        ), format="html")]
+        return [wrapper_node]
