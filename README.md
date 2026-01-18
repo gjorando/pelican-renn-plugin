@@ -1,38 +1,66 @@
-pelican-renn: A Plugin for Pelican
-====================================================
-
-[![Build Status](https://img.shields.io/github/actions/workflow/status/pelican-plugins/pelican-renn-plugin/main.yml?branch=main)](https://github.com/gjorando/pelican-renn-plugin/actions)
-[![PyPI Version](https://img.shields.io/pypi/v/pelican-renn-plugin)](https://pypi.org/project/pelican-renn-plugin/)
-[![Downloads](https://img.shields.io/pypi/dm/pelican-renn-plugin)](https://pypi.org/project/pelican-renn-plugin/)
-![License](https://img.shields.io/pypi/l/pelican-renn-plugin?color=blue)
+# pelican-renn: A Plugin for Pelican
 
 A plugin for my own needs
 
-Installation
-------------
+## Installation
 
-This plugin can be installed via:
+Using git submodules:
 
-    python -m pip install pelican-renn-plugin
+```bash
+# In the project root
+git submodule add git@github.com:gjorando/pelican-renn-plugin.git plugin
+```
 
-As long as you have not explicitly added a `PLUGINS` setting to your Pelican settings file, then the newly-installed plugin should be automatically detected and enabled. Otherwise, you must add `pelican_renn_plugin` to your existing `PLUGINS` list. For more information, please see the [How to Use Plugins](https://docs.getpelican.com/en/latest/plugins.html#how-to-use-plugins) documentation.
+Then add the following to `pelicanconf.py`:
 
-Usage
------
+```python
+# Plugins
+PLUGIN_PATHS = ["plugin/pelican/plugins/"]
+PLUGINS = ["pelican_renn_plugin", "..."]
+```
 
-<<Add plugin details here>>
+## Usage
 
-Contributing
-------------
+### The "projects" reST directive
 
-Contributions are welcome and much appreciated. Every little bit helps. You can contribute by improving the documentation, adding missing features, and fixing bugs. You can also help out by reviewing and commenting on [existing issues][].
+A grid of project tiles with a pop-up element.
 
-To start contributing to this plugin, review the [Contributing to Pelican][] documentation, beginning with the **Contributing Code** section.
+* _Directive Type:_ "projects"
+* _Directive Arguments:_ n.a.
+* _Directive Options:_ n.a.
+* _Directive Content:_ one or more "project" directives (one per project tile), and arbitrary content that accompanies the project grid.
 
-[existing issues]: https://github.com/gjorando/pelican-renn-plugin/issues
-[Contributing to Pelican]: https://docs.getpelican.com/en/latest/contribute.html
+Example usage:
 
-License
--------
+```rest
+.. project::
 
-This project is licensed under the MIT license.
+    (One or more "project" directives, see below)
+
+    This is arbitrary content that goes alongside the project grid. It will always be inserted after it.
+
+    Another paragraph!
+```
+
+### The "project" reST directive
+
+A single element of the "projects" grid.
+
+* _Directive Type:_ "project"
+* _Directive Arguments:_ n.a.
+* _Directive Options:_
+  * _"title":_ name of the project (mandatory)
+  * _"image":_ background image for the tile (mandatory)
+  * _"links":_ optional list of links added in the pop-up (optional, see example below).
+* _Directive Content:_ the content of the pop-up.
+
+Example usage:
+
+```rest
+.. project::
+    :title: My project
+    :image: images/my_project.jpg
+    :links: Website <https://perdu.com>, http://other-link.net
+
+    This is a description for my project.
+```
