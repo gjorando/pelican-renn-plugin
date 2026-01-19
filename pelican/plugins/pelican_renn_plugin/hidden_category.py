@@ -11,9 +11,6 @@ class HiddenCategory(Category):
     Virtual categories that are meant to list all the articles from the base category,
     including hidden articles. Note that all articles retain their original category,
     hence why we call them "virtual" categories.
-
-    To ensure they're treated like the base category, the slug is set to that of the
-    base category. This may or may not have unintended side effects...?
     """
 
     def __init__(self, base_category):
@@ -31,9 +28,6 @@ class HiddenCategory(Category):
 
         super().__init__(name.format(base_category=base_category),
                          settings)
-
-        # Force the slug of the hidden category to be the same as that of the base's
-        self.slug = base_category.slug
 
         # The base category is stored here
         self.base_category = base_category
@@ -103,8 +97,6 @@ def set_default_settings(instance):
         "HIDDENCATEGORY_SAVE_AS",
         f"{sa_parent}/{sa_name if sa_name else "index.html"}"
     )
-
-    print(instance.settings["HIDDENCATEGORY_URL"], instance.settings["HIDDENCATEGORY_SAVE_AS"])
 
     instance.settings.setdefault("HIDDENCATEGORY_OVERRIDES", dict())
 
