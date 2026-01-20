@@ -1,5 +1,4 @@
 import os
-import re
 
 from pelican import signals
 from docutils.parsers.rst import directives
