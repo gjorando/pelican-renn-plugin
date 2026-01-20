@@ -5,6 +5,7 @@ from docutils.parsers.rst import directives
 
 from .projects_directive import ProjectsDirective, ProjectDirective, parse_link
 from .hidden_category import create_hidden_categories
+from .noindex_category import patch_generate_direct_templates
 
 
 def set_default_settings(instance):
@@ -41,6 +42,9 @@ def set_default_settings(instance):
         if path not in instance.settings["ARTICLE_EXCLUDES"]:
             instance.settings["ARTICLE_EXCLUDES"].append(path)
 
+    # no-index categories
+    instance.settings.setdefault("NOINDEX_CATEGORIES", [])
+
 
 def register_filters(generator):
     """
@@ -61,3 +65,6 @@ def register():
 
     # hidden categories
     signals.article_generator_finalized.connect(create_hidden_categories)
+
+    # noindex categories
+    signals.article_generator_init.connect(patch_generate_direct_templates)

@@ -93,3 +93,12 @@ Dictionary mapping a base category slug to a dictionary of setting overrides. Th
 #### `HIDDENCATEGORY_EXCLUDES`
 
 List of category slugs to ignore in the creation of the hidden categories. The default is `[]`.
+
+
+### No-index categories
+
+This plugin also enables the capability to remove certain categories from the `index` page. This doesn't mean that the articles are hidden in any way, though. They are still listed in the per-category, per-author and per-tag pages, and in the archives. Moreover, the category remains visible in the `categories` page.
+
+#### `NOINDEX_CATEGORIES`
+
+List of categories whose articles will be removed from the index. The default is `[]`.
