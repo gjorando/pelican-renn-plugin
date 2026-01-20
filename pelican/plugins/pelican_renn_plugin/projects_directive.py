@@ -12,7 +12,7 @@ def parse_link(raw):
 
     match = re.match(r"^(.*)\s*<([^>]+)>$", raw)
     if not match:
-        raise ValueError(f"Invalid link format '{raw}'")
+        return raw, ""
     uri = match[2]
     title = match[1] if match[1] else match[2]
     return title.strip(), uri.strip()

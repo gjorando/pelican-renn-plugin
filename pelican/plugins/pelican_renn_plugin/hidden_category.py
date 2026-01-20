@@ -1,4 +1,3 @@
-import os
 import logging
 
 from collections import defaultdict
@@ -77,31 +76,3 @@ def create_hidden_categories(generator):
                      f"base category {articles[0].category}")
         articles.sort(key=attrgetter("date"), reverse=True)
         generator.categories.append((category, articles))
-
-
-def set_default_settings(instance):
-    """
-    Signal that initializes our plugin default settings.
-
-    :param instance: The Pelican instance.
-    """
-
-    instance.settings.setdefault("HIDDENCATEGORY_ENABLE", False)
-
-    instance.settings.setdefault("HIDDENCATEGORY_NAME", "{base_category}-full")
-
-    url_parent, url_name = os.path.split(instance.settings["CATEGORY_URL"])
-    instance.settings.setdefault(
-        "HIDDENCATEGORY_URL",
-        f"{url_parent}-full/{url_name}"
-    )
-
-    sa_parent, sa_name = os.path.split(instance.settings["HIDDENCATEGORY_URL"])
-    instance.settings.setdefault(
-        "HIDDENCATEGORY_SAVE_AS",
-        f"{sa_parent}/{sa_name if sa_name else "index.html"}"
-    )
-
-    instance.settings.setdefault("HIDDENCATEGORY_OVERRIDES", dict())
-
-    instance.settings.setdefault("HIDDENCATEGORY_EXCLUDES", [])
