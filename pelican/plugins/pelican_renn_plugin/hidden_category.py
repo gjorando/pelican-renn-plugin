@@ -1,10 +1,12 @@
 import os
+import logging
 
 from collections import defaultdict
 from operator import attrgetter
 
 from pelican.contents import Category
 
+_LOGGER = logging.getLogger(__name__)
 
 class HiddenCategory(Category):
     """
@@ -71,6 +73,8 @@ def create_hidden_categories(generator):
     generator.categories = generator.categories.copy()
     for category_name, articles in extra_categories.items():
         category = HiddenCategory(articles[0].category)
+        _LOGGER.info(f"renn: Generating hidden category {category} for "
+                     f"base category {articles[0].category}")
         articles.sort(key=attrgetter("date"), reverse=True)
         generator.categories.append((category, articles))
 
