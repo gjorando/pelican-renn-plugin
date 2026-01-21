@@ -1,7 +1,8 @@
 import os
 
-from pelican import signals
+from pelican import signals, ArticlesGenerator
 from docutils.parsers.rst import directives
+from pelican.plugins.i18n_subsites import article2draft
 
 from .projects_directive import ProjectsDirective, ProjectDirective, parse_link
 from .hidden_category import create_hidden_categories
@@ -31,16 +32,16 @@ def set_default_settings(instance):
     instance.settings.setdefault("HIDDENCATEGORY_OVERRIDES", dict())
     instance.settings.setdefault("HIDDENCATEGORY_EXCLUDES", [])
 
-    # lander page settings
-    instance.settings.setdefault("LANDER_ENABLE", False)
-    instance.settings.setdefault("LANDER_PATHS", ["lander"])
-    instance.settings.setdefault("LANDER_EXCLUDES", [])
-    instance.settings.setdefault("LANDER_SAVE_AS", "lander.html")
-
-    # Automatically exclude lander page paths from the articles
-    for path in instance.settings["LANDER_PATHS"]:
-        if path not in instance.settings["ARTICLE_EXCLUDES"]:
-            instance.settings["ARTICLE_EXCLUDES"].append(path)
+    # # We need to update this parameter so that the i18n subsites plugin takes into account hidden articles in its untranslated policy
+    instance.settings.setdefault("I18N_GENERATORS_INFO", {
+        ArticlesGenerator: {
+            "translations_lists": ["translations", "drafts_translations",
+                                   "hidden_translations"],
+            "contents_lists": [("articles", "drafts"), ("hidden_articles", "drafts")],
+            "hiding_func": article2draft,
+            "policy": "I18N_UNTRANSLATED_ARTICLES",
+        },
+    })
 
     # no-index categories
     instance.settings.setdefault("NOINDEX_CATEGORIES", [])
