@@ -1,6 +1,6 @@
 # pelican-renn: A Plugin for Pelican
 
-A plugin for my own needs. It is designed to be tightly integrated to a custom theme I made, [`pelican-renn`](https://github.com/gjorando/pelican-renn).
+A plugin for my own needs. It is designed to be tightly integrated to a custom theme I made, [`pelican-renn`](https://github.com/gjorando/pelican-renn). See over there for an example configuration file.
 
 ## Installation
 
