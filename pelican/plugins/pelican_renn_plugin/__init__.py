@@ -4,7 +4,8 @@ from pelican import signals, ArticlesGenerator
 from docutils.parsers.rst import directives
 from pelican.plugins.i18n_subsites import article2draft
 
-from .projects_directive import ProjectsDirective, ProjectDirective, parse_link
+from .jinja_filters import parse_link, get_flag_emoji
+from .projects_directive import ProjectsDirective, ProjectDirective
 from .hidden_category import create_hidden_categories
 from .noindex_category import patch_generate_direct_templates
 
@@ -53,6 +54,7 @@ def register_filters(generator):
     """
 
     generator.env.filters["parse_link"] = parse_link
+    generator.env.filters["get_flag_emoji"] = get_flag_emoji
 
 
 def register():

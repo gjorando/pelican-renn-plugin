@@ -1,21 +1,9 @@
-import re
 import hashlib
 
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 
-
-def parse_link(raw):
-    """
-    Small function that parses a raw link (`text <uri>` or `uri`).
-    """
-
-    match = re.match(r"^(.*)\s*<([^>]+)>$", raw)
-    if not match:
-        return raw, ""
-    uri = match[2]
-    title = match[1] if match[1] else match[2]
-    return title.strip(), uri.strip()
+from .jinja_filters import parse_link
 
 
 class ProjectDirective(Directive):
