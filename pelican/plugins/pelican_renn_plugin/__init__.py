@@ -8,6 +8,7 @@ from .jinja_filters import parse_link, get_flag_emoji
 from .projects_directive import ProjectsDirective, ProjectDirective
 from .hidden_category import create_hidden_categories
 from .noindex_category import patch_generate_direct_templates
+from .tailwindcss import load_tailwind, compile_css
 
 
 def set_default_settings(instance):
@@ -33,7 +34,7 @@ def set_default_settings(instance):
     instance.settings.setdefault("HIDDENCATEGORY_OVERRIDES", dict())
     instance.settings.setdefault("HIDDENCATEGORY_EXCLUDES", [])
 
-    # # We need to update this parameter so that the i18n subsites plugin takes into account hidden articles in its untranslated policy
+    # We need to update this parameter so that the i18n subsites plugin takes into account hidden articles in its untranslated policy
     instance.settings.setdefault("I18N_GENERATORS_INFO", {
         ArticlesGenerator: {
             "translations_lists": ["translations", "drafts_translations",
@@ -46,6 +47,13 @@ def set_default_settings(instance):
 
     # no-index categories
     instance.settings.setdefault("NOINDEX_CATEGORIES", [])
+
+    # Tailwind CSS
+    instance.settings.setdefault("TAILWINDCSS_ENABLE", False)
+    instance.settings.setdefault("TAILWINDCSS_VERSION", "latest")
+    instance.settings.setdefault("TAILWINDCSS_CONFIG", None)
+    instance.settings.setdefault("TAILWINDCSS_INPUT_FILES", [])
+    instance.settings.setdefault("TAILWINDCSS_MINIFY", True)
 
 
 def register_filters(generator):
@@ -71,3 +79,7 @@ def register():
 
     # noindex categories
     signals.article_generator_init.connect(patch_generate_direct_templates)
+
+    # Tailwind CSS
+    signals.initialized.connect(load_tailwind)
+    signals.finalized.connect(compile_css)

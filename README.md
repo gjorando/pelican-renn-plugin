@@ -94,7 +94,6 @@ Dictionary mapping a base category slug to a dictionary of setting overrides. Th
 
 List of category slugs to ignore in the creation of the hidden categories. The default is `[]`.
 
-
 ### No-index categories
 
 This plugin also enables the capability to remove certain categories from the `index` page. This doesn't mean that the articles are hidden in any way, though. They are still listed in the per-category, per-author and per-tag pages, and in the archives. Moreover, the category remains visible in the `categories` page.
@@ -102,3 +101,27 @@ This plugin also enables the capability to remove certain categories from the `i
 #### `NOINDEX_CATEGORIES`
 
 List of categories whose articles will be removed from the index. The default is `[]`.
+
+### Tailwind CSS integration
+
+Taking inspiration from an older [Pelican plugin](https://github.com/pelican-plugins/tailwindcss/), this plugin offers a [Tailwind CSS](https://tailwindcss.com) integration using [`pytailwindcss`](https://pypi.org/project/pytailwindcss/).
+
+#### `TAILWINDCSS_ENABLE`
+
+A flag that enables the feature. The default is `False`.
+
+#### `TAILWINDCSS_VERSION`
+
+Tailwind CSS version to use. The default is `latest`.
+
+#### `TAILWINDCSS_CONFIG`
+
+Optional Tailwind CSS configuration file, relative to the current working directory. The default is `None`, as this has been deprecated since Tailwind CSS 4.x.
+
+#### `TAILWINDCSS_INPUT_FILES`
+
+List of Tailwind CSS input files, relative to the current working directory. All of these files should be contained in any path of either `STATIC_PATHS` or `THEME_STATIC_PATHS`. The default is `[]`.
+
+#### `TAILWINDCSS_MINIFY`
+
+Whether to minify the output files. The default is `True`.
