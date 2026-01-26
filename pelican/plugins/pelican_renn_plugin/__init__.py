@@ -9,6 +9,7 @@ from .projects_directive import ProjectsDirective, ProjectDirective
 from .hidden_category import create_hidden_categories
 from .noindex_category import patch_generate_direct_templates
 from .tailwindcss import load_tailwind, compile_css
+from .html5_reader import patch_reader
 
 
 def set_default_settings(instance):
@@ -18,7 +19,7 @@ def set_default_settings(instance):
     :param instance: The Pelican instance.
     """
 
-    # hidden categories settings
+    # Hidden categories settings
     instance.settings.setdefault("HIDDENCATEGORY_ENABLE", False)
     instance.settings.setdefault("HIDDENCATEGORY_NAME", "{base_category}-full")
     url_parent, url_name = os.path.split(instance.settings["CATEGORY_URL"])
@@ -45,7 +46,7 @@ def set_default_settings(instance):
         },
     })
 
-    # no-index categories
+    # No-index categories
     instance.settings.setdefault("NOINDEX_CATEGORIES", [])
 
     # Tailwind CSS
@@ -54,6 +55,9 @@ def set_default_settings(instance):
     instance.settings.setdefault("TAILWINDCSS_CONFIG", None)
     instance.settings.setdefault("TAILWINDCSS_INPUT_FILES", [])
     instance.settings.setdefault("TAILWINDCSS_MINIFY", True)
+
+    # HTML 5
+    instance.settings.setdefault("HTML5_ENABLE", True)
 
 
 def register_filters(generator):
@@ -83,3 +87,6 @@ def register():
     # Tailwind CSS
     signals.initialized.connect(load_tailwind)
     signals.finalized.connect(compile_css)
+
+    # HTML5 RST reader
+    signals.readers_init.connect(patch_reader)

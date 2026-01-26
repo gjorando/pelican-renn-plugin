@@ -125,3 +125,11 @@ List of Tailwind CSS input files, relative to the current working directory. All
 #### `TAILWINDCSS_MINIFY`
 
 Whether to minify the output files. The default is `True`.
+
+### HTML5 reStructuredText parser
+
+This plugin automatically enables HTML5 parsing of reST files. This feature is enabled by default.
+
+#### `HTML5_ENABLE`
+
+Whether to generate HTML5 output from reST files. The default is `True`.
