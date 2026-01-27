@@ -138,6 +138,37 @@ List of Tailwind CSS input files, relative to the current working directory. All
 
 Whether to minify the output files. The default is `True`.
 
+### Thumbnails
+
+Taking inspiration from an older [Pelican plugin](https://github.com/pelican-plugins/thumbnailer/), this plugin allows for automatic creation of thumbnail images.
+
+#### `THUMBNAIL_ENABLE`
+
+A flag that enables the feature. The default is `False`.
+
+#### `THUMBNAIL_SAVE_AS`
+
+The location to save a thumbnail. The available format variables correspond to the majority of `pathlib.Path`'s common attributes for the path of the original image. `resize` and `resize_spec` are also available, exposing the name and spec of the resize operation (see `THUMBNAIL_RESIZES`). The default is `{parent}/thumbnails/{stem}_{resize}{suffix}` (for a given image, put its thumbnail in a thumbnails subdirectory of the original image's directory, and add `_{resize}` to its file name, before the extension).
+
+#### `THUMBNAIL_PATHS`
+
+Paths to consider for thumbnail generation. The default is `["images"]`.
+
+#### `THUMBNAIL_RESIZES`
+
+Resize operations to apply to each image. The key gives the operation a name, while the value can be of any of the following formats, where `w`, `h`, `s` are positive integer values:
+
+* `wxh` resizes to exactly wxh pixels, cropping if necessary;
+* `wch` resizes to exactly wxh pixels, deforming the image in the process;
+* `wx?` and `?xh` resize to the specified width/height while keeping the original aspect ratio;
+* `s` is a shorthand for `wxh`, with `w=h=s`.
+
+The default is `{"square": "150", "wide": "150x?", "tall": "?x150"}`.
+
+#### `THUMBNAIL_SKIP_EXISTING`
+
+Whether to skip a thumbnail if it already exists in the output path. The default is `True`.
+
 ### HTML5 reStructuredText parser
 
 This plugin automatically enables HTML5 parsing of reST files. This feature is enabled by default.

@@ -10,6 +10,7 @@ from .hidden_category import create_hidden_categories
 from .noindex_category import patch_generate_direct_templates
 from .tailwindcss import load_tailwind, compile_css
 from .html5_reader import patch_reader
+from .thumbnail import generate_thumbnails, load_pillow
 
 
 def set_default_settings(instance):
@@ -59,6 +60,18 @@ def set_default_settings(instance):
     # HTML 5
     instance.settings.setdefault("HTML5_ENABLE", True)
 
+    # Thumbnail
+    instance.settings.setdefault("THUMBNAIL_ENABLE", False)
+    instance.settings.setdefault("THUMBNAIL_SAVE_AS",
+                                 "{parent}/thumbnails/{stem}_{resize}{suffix}")
+    instance.settings.setdefault("THUMBNAIL_PATHS", ["images"])
+    instance.settings.setdefault("THUMBNAIL_RESIZES", {
+        "square": "150",
+        "wide": "150x?",
+        "tall": "?x150",
+    })
+    instance.settings.setdefault("THUMBNAIL_SKIP_EXISTING", True)
+
 
 def register():
     # global
@@ -82,3 +95,7 @@ def register():
 
     # HTML5 RST reader
     signals.readers_init.connect(patch_reader)
+
+    # Thumbnail
+    signals.initialized.connect(load_pillow)
+    signals.finalized.connect(generate_thumbnails)

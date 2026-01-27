@@ -15,15 +15,11 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Topic :: Internet :: WWW/HTTP",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.14"
 dependencies = [
     "pelican>=4.5",
     "pelican-i18n-subsites",
@@ -36,6 +32,7 @@ dependencies = [
 [project.optional-dependencies]
 markdown = ["markdown>=3.4"]
 tailwindcss = ["pytailwindcss>=0.3", "requests>=2"]
+thumbnail = ["Pillow>=12"]
 
 [dependency-groups]
 lint = [
