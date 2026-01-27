@@ -1,12 +1,11 @@
 import hashlib
 
 from docutils import nodes
-from docutils.frontend import OptionParser, Values
 from docutils.writers.html5_polyglot import HTMLTranslator
 from docutils.core import publish_parts
 from docutils.utils import new_document
 from docutils.parsers.rst import Directive, directives
-from jinja2 import PackageLoader
+from jinja2 import PackageLoader, PrefixLoader, TemplateNotFound
 from pelican.plugins.i18n_subsites import relpath_to_site
 
 from .jinja_filters import parse_link
@@ -30,7 +29,11 @@ def register_templates(generator):
     jinja_context = generator.settings
     readers = generator.readers
 
-    jinja_env.loader.loaders.append(PackageLoader("pelican_renn_plugin", "templates"))
+    plugin_templates = PackageLoader("pelican_renn_plugin", "templates")
+
+    jinja_env.loader.loaders.append(PrefixLoader({
+        "!renn": plugin_templates,
+    }))
 
 
 class ProjectDirective(Directive):
@@ -53,10 +56,13 @@ class ProjectDirective(Directive):
         Create a list element for the project.
         """
 
-        template = jinja_env.get_template(self.options.get(
-            "template",
-            "snippets/project.html"
-        ))
+        try:
+            template = jinja_env.get_template(self.options.get(
+                "template",
+                "snippets/project.html"
+            ))
+        except TemplateNotFound:
+            template = jinja_env.get_template("!renn/snippets/project.html")
 
         # Ensure we are inside a projects-modal
         if not "projects-temp-container" in self.state.parent["classes"]:
@@ -116,10 +122,13 @@ class ProjectsDirective(Directive):
         Create a bullet list node and populate it with the contents of the directive.
         """
 
-        template = jinja_env.get_template(self.options.get(
-            "template",
-            "snippets/projects.html"
-        ))
+        try:
+            template = jinja_env.get_template(self.options.get(
+                "template",
+                "snippets/projects.html"
+            ))
+        except TemplateNotFound:
+            template = jinja_env.get_template("!renn/snippets/projects.html")
 
         container = nodes.container(classes=["projects-temp-container"])
         self.state.nested_parse(self.content, self.content_offset, container)
