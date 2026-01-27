@@ -1,0 +1,10 @@
+<div>
+    <ul class="w-full grid grid-flow-row grid-cols-2 gap-2 lg:w-1/2 lg:float-right lg:mx-4">
+        {% for project in projects %}
+            {{ project }}
+        {% endfor %}
+    </ul>
+    {% for elem in wrapped %}
+        {{ elem }}
+    {% endfor %}
+</div>

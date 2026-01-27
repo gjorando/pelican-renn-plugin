@@ -1,0 +1,20 @@
+<li class="aspect-144/89" style="background: center/contain no-repeat url('{{ SITE_URL }}/{{ relpath_to_site(DEFAULT_LANG, main_lang) }}/{{ project_image }}');">
+    <button popovertarget="{{ popover_id }}" class="size-full duration-1000 inline-flex items-center justify-center pointer-coarse:items-start pointer-coarse:justify-start px-1.5 not-pointer-coarse:bg-link/85 text-foreground not-pointer-coarse:opacity-0 hover:opacity-100 pointer-coarse:text-shadow-md text-shadow-background text-3xl font-bold">
+        {{ project_title }}
+    </button>
+    <div popover id="{{ popover_id }}" class="m-auto w-full md:w-85/100 lg:w-1/2 max-h-1/2 p-8 bg-foreground text-background overflow-auto">
+        <div class="base-flex">
+            <h2 class="m-0">{{ project_title }}</h2>
+            {{ project_content }}
+            {% if project_links %}
+                <hr class="opacity-50" />
+                <ul>
+                    {% for title, uri in project_links %}
+                        <li><a href="{{ uri }}">{{ title }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    <div class="popover-overlay"></div>
+</li>

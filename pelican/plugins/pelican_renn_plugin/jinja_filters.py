@@ -1,6 +1,15 @@
 import re
 
 
+def register_filters(generator):
+    """
+    Signal that registers the custom jinja filters.
+    """
+
+    generator.env.filters["parse_link"] = parse_link
+    generator.env.filters["get_flag_emoji"] = get_flag_emoji
+
+
 def parse_link(raw):
     """
     Parse a raw link (`text <uri>` or `uri`).

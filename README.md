@@ -23,22 +23,20 @@ PLUGINS = ["pelican_renn_plugin", "..."]
 
 ### The `projects` and `project` directives
 
-A `projects`directive is a grid of project tiles with a pop-up element.
+A `projects` directive is a list of projects. The default templates effectively render this as a list (`<ul>`) of `popover` elements with their associated `button` element. Each button is rendered as a tile with a background image, but feel free to override the templates to render the directives anyway you want.
 
 Example usage:
 
 ```rest
 .. projects::
 
-    .. project::
-        :title: My project
+    .. project:: My project
         :image: images/my_project.jpg
         :links: Website <https://perdu.com>, http://other-link.net
 
         This is a description for my project.
 
-    .. project::
-        :title: My other project
+    .. project:: My other project
         :image: images/my_other_project.jpg
 
         This is a description for my other project.
@@ -52,18 +50,32 @@ Example usage:
 
 * _Directive Type:_ `projects`
 * _Directive Arguments:_ n.a.
-* _Directive Options:_ n.a.
-* _Directive Content:_ one or more `project` directives (one per project tile), and arbitrary content that accompanies the project grid.
+* _Directive Options:_
+  * `template`: override for the default rendering template (optional, see below)
+* _Directive Content:_ one or more `project` directives (one per project tile), and arbitrary content that accompanies the project grid
+
+The template context includes the following additional values.
+
+* `projects`: rendered `project` elements (`list`)
+* `wrapped`: rendered arbitrary content that accompanies the project grid (`list`)
 
 #### `project`
 
 * _Directive Type:_ `project`
-* _Directive Arguments:_ n.a.
+* _Directive Arguments:_ one, required (project name)
 * _Directive Options:_
-  * `title`: name of the project (mandatory)
-  * `image`: background image for the tile (mandatory)
-  * `links`: optional list of links added in the pop-up (optional, see example below).
-* _Directive Content:_ the content of the pop-up.
+  * `image`: background image for the button (required)
+  * `links`: optional list of links added in the pop-up (optional, see example above)
+  * `template`: override for the default rendering template (optional, see below)
+* _Directive Content:_ the content of the pop-up
+
+The template context includes the following additional values.
+
+* `project_title`: project name (`str`)
+* `project_image`: image URI (`str`)
+* `project_links`: links (`list` of `tuple` as `(title, uri)`)
+* `project_content`: rendered content of the directive (`str`)
+* `popover_id`: a unique identifier for the project (`str`)
 
 ### Hidden categories
 

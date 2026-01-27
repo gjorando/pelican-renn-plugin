@@ -4,8 +4,8 @@ from pelican import signals, ArticlesGenerator
 from docutils.parsers.rst import directives
 from pelican.plugins.i18n_subsites import article2draft
 
-from .jinja_filters import parse_link, get_flag_emoji
-from .projects_directive import ProjectsDirective, ProjectDirective
+from .jinja_filters import parse_link, get_flag_emoji, register_filters
+from .projects_directive import ProjectsDirective, ProjectDirective, register_templates
 from .hidden_category import create_hidden_categories
 from .noindex_category import patch_generate_direct_templates
 from .tailwindcss import load_tailwind, compile_css
@@ -60,21 +60,13 @@ def set_default_settings(instance):
     instance.settings.setdefault("HTML5_ENABLE", True)
 
 
-def register_filters(generator):
-    """
-    Signal that registers the custom jinja filters.
-    """
-
-    generator.env.filters["parse_link"] = parse_link
-    generator.env.filters["get_flag_emoji"] = get_flag_emoji
-
-
 def register():
     # global
     signals.initialized.connect(set_default_settings)
+    signals.generator_init.connect(register_filters)
 
     # projects directive
-    signals.generator_init.connect(register_filters)
+    signals.generator_init.connect(register_templates)
     directives.register_directive("projects", ProjectsDirective)
     directives.register_directive("project", ProjectDirective)
 
