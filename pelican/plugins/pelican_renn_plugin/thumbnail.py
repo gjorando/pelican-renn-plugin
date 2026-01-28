@@ -61,10 +61,6 @@ class ResizeSpec:
            (self.h is not None and self.h <= 0):
             raise ValueError("Dimensions should be strictly positive integers")
 
-        # If we don't have a custom callback, Pillow is a hard requirement
-        if not (self.custom_callback or pil_imports):
-            raise RuntimeError("Pillow is not installed")
-
     def __call__(self, image):
         """
         Perform the resize operation.
@@ -76,6 +72,10 @@ class ResizeSpec:
         # If we have a custom callback, it is used instead
         if self.custom_callback:
             return self.custom_callback(image)
+
+        # If we don't have a custom callback, Pillow is a hard requirement
+        if not pil_imports:
+            raise RuntimeError("Pillow is not installed")
 
         # Operations where the image is not deformed
         if self.keep_aspect:

@@ -109,3 +109,33 @@ def register():
     signals.page_generator_write_page.connect(override_page_context)
     signals.page_writer_finalized.connect(restore_page_context)
     signals.article_generator_init.connect(patch_generate_categories)
+
+    # Temporary fix (see below)
+    signals.static_generator_finalized.connect(temp_fix)
+
+
+# FIXME This is a bug or maybe expected behaviour? idk I'm tired
+def temp_fix(generator):
+    """
+    This temporary fix partially addresses what seems to be a bug in either Pelican or
+    the i18n-subsites plugin. When a subsite explicitly links a static file with
+    {static}, it is added to its static generator context (in static_content). Then,
+    when i18n_subsites.interlink_static_files runs, The test on line 371 fails because
+    staticfile is indeed already in the generator static_content. As a result, those
+    static files in the subsite are linked to a copy in the subsite, instead of the one
+    in the main site.
+
+    By force-clearing generator.context["static_content"] if STATIC_PATHS == [] (which
+    happens only when we are in a subsite), we ensure all static files get the correct
+    path. There's still an extra copy in the subsite, but at least the links point to
+    the original ones in the main site.
+
+    This doesn't happen if we skip using {static} entirely in the subsite, and use the
+    absolute path instead. I mean, this could be the solution, but i18n-subsites
+    doesn't say anything about if we are actually supposed to use {static} or not.
+
+    What a mess lmao.
+    """
+
+    if not len(generator.settings["STATIC_PATHS"]):
+        generator.context["static_content"] = dict()
