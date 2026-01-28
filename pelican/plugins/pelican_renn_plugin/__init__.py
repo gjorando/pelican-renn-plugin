@@ -64,11 +64,12 @@ def set_default_settings(instance):
     instance.settings.setdefault("THUMBNAIL_ENABLE", False)
     instance.settings.setdefault("THUMBNAIL_SAVE_AS",
                                  "{parent}/thumbnails/{stem}_{resize}{suffix}")
+    # FIXME would be better if this was relative to the content path, and we were resolving each path to its destination path in OUTPUT_PATH
     instance.settings.setdefault("THUMBNAIL_PATHS", ["images"])
     instance.settings.setdefault("THUMBNAIL_RESIZES", {
-        "square": "150",
-        "wide": "150x?",
-        "tall": "?x150",
+        "square": (150, True),  # Cropped square of size 150x150px
+        "wide": (150, None, True),  # Keep aspect ratio and set width to 150px
+        "tall": (None, 150, True),  # Keep aspect ratio and set height to 150px
     })
     instance.settings.setdefault("THUMBNAIL_SKIP_EXISTING", True)
 

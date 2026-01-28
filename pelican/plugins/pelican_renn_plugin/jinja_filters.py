@@ -1,10 +1,8 @@
 import re
 
-from pathlib import Path
-
 from jinja2 import pass_context
 
-from .thumbnail import path_to_dict
+from .thumbnail import path_to_dict, ResizeSpec
 
 
 def register_filters(generator):
@@ -51,7 +49,7 @@ def get_flag_emoji(code):
 @pass_context
 def get_thumbnail(ctx, path, resize):
     """
-    Retrieve the path of a thumbnail for a given image.
+    Retrieve the path of a thumbnail for a given image and resize spec name.
 
     :param ctx: Jinja `Context`.
     :param path: Path of the image.
@@ -59,12 +57,15 @@ def get_thumbnail(ctx, path, resize):
     :return: The thumbnail path, or the original path if the thumbnail doesn't exist.
     """
 
-    resize_spec = ctx.get("THUMBNAIL_RESIZES")
+    resize_settings = ctx.get("THUMBNAIL_RESIZES")
+    if not resize_settings:
+        return path
+    resize_spec = resize_settings.get(resize)
     if not resize_spec:
         return path
 
     return ctx["THUMBNAIL_SAVE_AS"].format(
         resize=resize,
-        resize_spec=resize_spec,
+        resize_spec=str(ResizeSpec(resize_spec)),
         **path_to_dict(path)
     )

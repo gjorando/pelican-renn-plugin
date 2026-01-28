@@ -148,22 +148,27 @@ A flag that enables the feature. The default is `False`.
 
 #### `THUMBNAIL_SAVE_AS`
 
-The location to save a thumbnail. The available format variables correspond to the majority of `pathlib.Path`'s common attributes for the path of the original image. `resize` and `resize_spec` are also available, exposing the name and spec of the resize operation (see `THUMBNAIL_RESIZES`). The default is `{parent}/thumbnails/{stem}_{resize}{suffix}` (for a given image, put its thumbnail in a thumbnails subdirectory of the original image's directory, and add `_{resize}` to its file name, before the extension).
+The location to save a thumbnail. The available format variables correspond to the majority of `pathlib.Path`'s common attributes for the path of the original image. `resize` and `resize_spec` are also available, exposing the name and spec of the resize operation (see `THUMBNAIL_RESIZES`). The default is `{parent}/thumbnails/{stem}_{resize}{suffix}` (for a given image, put its thumbnail in a thumbnails subdirectory of the original image's directory, and suffix the file name (before the extension) with the name of the resize operation).
 
 #### `THUMBNAIL_PATHS`
 
-Paths to consider for thumbnail generation. The default is `["images"]`.
+Paths to consider for thumbnail generation, either full directories or single images. Please not that those paths are relative to `OUTPUT_PATH`, so you need to consider where your images in the `PATH` directory will go. The default is `["images"]`.
 
 #### `THUMBNAIL_RESIZES`
 
-Resize operations to apply to each image. The key gives the operation a name, while the value can be of any of the following formats, where `w`, `h`, `s` are positive integer values:
+Resize operations to apply to each image. The key gives the operation a name, while the value can be any of the following formats.
 
-* `wxh` resizes to exactly wxh pixels, cropping if necessary;
-* `wch` resizes to exactly wxh pixels, deforming the image in the process;
-* `wx?` and `?xh` resize to the specified width/height while keeping the original aspect ratio;
-* `s` is a shorthand for `wxh`, with `w=h=s`.
+* `(s: int,)` or `s: int`: resizes to exactly `sxs` pixels, deforming the image in the process.
+* `(w: int|None, h: int|None)`: resizes to exactly `wxh` pixels, deforming the image in the process. If `w` or `h` is `None`, that dimension is left untouched. As a result, `(None, None)` is a no-op.
+* `(s: int, c: bool)`: resizes to exactly `sxs` pixels, but if `c` is `True`, the image is cropped as to not deform the proportions.
+* `(w: int|None, h: int|None, c: bool)`: resizes to exactly `wxh` pixels, but if `c` is `True`, the image is cropped as to not deform the proportions. If `w` or `h` is `None` and `c` is `True`, the `None` dimension is computed automatically so that the aspect ratio is kept intact. As a result, again, `(None, None, True|False)` is a no-op.
+* `Callable[[PIL.Image], PIL.Image`]`: custom operation that takes a Pillow image object as a parameter, and returns a new image object.
 
-The default is `{"square": "150", "wide": "150x?", "tall": "?x150"}`.
+If there is any cropping done, it is done with the original image center as the center point.
+
+In `THUMBNAIL_SAVE_AS`, `resize_spec` exposes a string with the following format: `wfh`, with `w` and `h` the width and height dimensions (or `?` if omitted), and `f` is either `x` if `c` is `False` or unset, or `f` if `c` is `True`. If the format is a callable instead, its name (`__name__`) is used for resize_spec, or `repr(callable)` if it doesn't have a `__name__` attribute.
+
+The default is `{"square": 150, "wide": (150, None, True), "tall": (None, 150, True)}`.
 
 #### `THUMBNAIL_SKIP_EXISTING`
 
