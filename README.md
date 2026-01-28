@@ -87,7 +87,7 @@ A flag that enables the feature. The default is `False`.
 
 #### `HIDDENCATEGORY_NAME`
 
-The name of the virtual category. `base_category` is available as a template parameter to expose the base category object. The default is `{base_category}-full` (the string representation of `Category` objects is the category name).
+The name of the virtual category. `base_category` is available as a template parameter to expose the base category object. The default is `{base_category} (full)` (the string representation of `Category` objects is the category name).
 
 #### `HIDDENCATEGORY_URL`
 
@@ -97,10 +97,6 @@ The URL to use for a virtual category. The default is computed from `CATEGORY_UR
 
 The location to save a virtual category. The default is computed from `HIDDENCATEGORY_URL`, adding an `index.html` if
 the URL doesn't specify a filename.
-
-#### `HIDDENCATEGORY_OVERRIDES`
-
-Dictionary mapping a base category slug to a dictionary of setting overrides. These overrides update the `settings` attribute of a category, while leaving the original settings untouched. The default is `{}`.
 
 #### `HIDDENCATEGORY_EXCLUDES`
 
@@ -173,6 +169,16 @@ The default is `{"square": 150, "wide": (150, None, True), "tall": (None, 150, T
 #### `THUMBNAIL_SKIP_EXISTING`
 
 Whether to skip a thumbnail if it already exists in the output path. The default is `True`.
+
+### Overrides
+
+This plugin enables a way of overriding settings on a per-object basis. Currently, settings can be overridden for a `Page` object, a `Category` object, or a `HiddenCategory` object.
+
+#### `OVERRIDES`
+
+Mapping of overrides to apply. Each key is a 2-tuple like `(slug, object_type)`, with `slug` The slug of the object to apply the overrides to, and `object_type` the name of the class of the object (see above for the currently supported objects). Each value is a dictionary of settings overrides. The default is `dict()`.
+
+Please note that the slug of `HiddenCategory` objects must be that of their base category.
 
 ### HTML5 reStructuredText parser
 

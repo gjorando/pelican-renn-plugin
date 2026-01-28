@@ -1,11 +1,9 @@
 # Partially based on https://github.com/pelican-plugins/thumbnailer
 
 import logging
-import re
 
 from importlib import import_module
 from pathlib import Path
-from types import NoneType
 
 pil_imports = None
 _LOGGER = logging.getLogger(__name__)
@@ -20,6 +18,10 @@ class ResizeSpec:
     def __init__(self, spec_format):
         """
         :param spec_format: See `README.md` for more information.
+        :raise ValueError: If `spec_format`'s value is incorrect.
+        :raise TypeError: If `spec_format` is not a tuple, integer or callable.
+        :raise RuntimeError: If the spec_format is not a callable while Pillow is not
+        installed.
         """
 
         self.w = None
@@ -50,7 +52,9 @@ class ResizeSpec:
             case f if callable(f):  # Custom resize operation
                 self.custom_callback = f
             case _:
-                raise AttributeError(f"{spec_format}: incorrect spec format")
+                if isinstance(spec_format, tuple):
+                    raise ValueError(f"{spec_format}: incorrect spec format")
+                raise TypeError(f"{type(spec_format)}: not a valid spec format type")
 
         # If a dimension is set, it must be strictly positive
         if (self.w is not None and self.w <= 0) or \

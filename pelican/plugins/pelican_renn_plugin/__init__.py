@@ -11,6 +11,8 @@ from .noindex_category import patch_generate_direct_templates
 from .tailwindcss import load_tailwind, compile_css
 from .html5_reader import patch_reader
 from .thumbnail import generate_thumbnails, load_pillow
+from .overrides import (override_page_context, restore_page_context,
+                        patch_generate_categories)
 
 
 def set_default_settings(instance):
@@ -22,7 +24,7 @@ def set_default_settings(instance):
 
     # Hidden categories settings
     instance.settings.setdefault("HIDDENCATEGORY_ENABLE", False)
-    instance.settings.setdefault("HIDDENCATEGORY_NAME", "{base_category}-full")
+    instance.settings.setdefault("HIDDENCATEGORY_NAME", "{base_category} (full)")
     url_parent, url_name = os.path.split(instance.settings["CATEGORY_URL"])
     instance.settings.setdefault(
         "HIDDENCATEGORY_URL",
@@ -33,7 +35,6 @@ def set_default_settings(instance):
         "HIDDENCATEGORY_SAVE_AS",
         f"{sa_parent}/{sa_name if sa_name else "index.html"}"
     )
-    instance.settings.setdefault("HIDDENCATEGORY_OVERRIDES", dict())
     instance.settings.setdefault("HIDDENCATEGORY_EXCLUDES", [])
 
     # We need to update this parameter so that the i18n subsites plugin takes into account hidden articles in its untranslated policy
@@ -73,6 +74,9 @@ def set_default_settings(instance):
     })
     instance.settings.setdefault("THUMBNAIL_SKIP_EXISTING", True)
 
+    # Overrides
+    instance.settings.setdefault("OVERRIDES", dict())
+
 
 def register():
     # global
@@ -100,3 +104,8 @@ def register():
     # Thumbnail
     signals.initialized.connect(load_pillow)
     signals.finalized.connect(generate_thumbnails)
+
+    # Overrides
+    signals.page_generator_write_page.connect(override_page_context)
+    signals.page_writer_finalized.connect(restore_page_context)
+    signals.article_generator_init.connect(patch_generate_categories)

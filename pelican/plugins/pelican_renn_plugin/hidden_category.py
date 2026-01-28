@@ -15,20 +15,11 @@ class HiddenCategory(Category):
     """
 
     def __init__(self, base_category):
-        # Optional settings overrides
-        settings = base_category.settings.copy()
-        settings.update(
-            base_category.settings["HIDDENCATEGORY_OVERRIDES"].get(
-                base_category.slug,
-                dict()
-            )
-        )
-
         # Parse the name of the hidden category
-        name = settings[f"{self.__class__.__name__.upper()}_NAME"]
+        name = base_category.settings[f"{self.__class__.__name__.upper()}_NAME"]
 
         super().__init__(name.format(base_category=base_category),
-                         settings)
+                         base_category.settings)
 
         # The base category is stored here
         self.base_category = base_category
