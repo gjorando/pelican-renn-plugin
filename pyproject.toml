@@ -22,7 +22,7 @@ classifiers = [
 requires-python = ">=3.14"
 dependencies = [
     "pelican>=4.5",
-    "pelican-i18n-subsites",
+    "pelican-i18n-subsites>=1.0",
 ]
 
 [project.urls]

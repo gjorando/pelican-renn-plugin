@@ -187,3 +187,7 @@ This plugin automatically enables HTML5 parsing of reST files. This feature is e
 #### `HTML5_ENABLE`
 
 Whether to generate HTML5 output from reST files. The default is `True`.
+
+### Patched `i18n-subsites` plugin
+
+This repository bundles [a patched version of i18n-subsites](pelican/plugins/patched_i18n_subsites) that addresses a small bug with static files. Check [the source code](pelican/plugins/patched_i18n_subsites/__init__.py) for more information about this issue.
